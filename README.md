@@ -1,7 +1,5 @@
 # TTSDK-Core
 
-For most of these functionalities there are more comprehensive ways to achieve things, but I found some of this useful for simplicity reasons.
-
 #### Abstraction - IDed
   Assigns a unique ID to the instance of an extending class.
   This is achieved by keeping count of the current highest id 
@@ -104,7 +102,7 @@ The mode only needs to be set once, and will be applied across all classes.
   they are not precise in their timings, and a blocking task
   will block all subsequent tasks!
   
-  Implement your tasks that need to be periodically done:
+  Implement your tasks that need to be done periodically:
   
 ```java
 class Caller extends ThreadTask {
@@ -155,3 +153,14 @@ thread_for_several_periodic_tasks.Stop(); // its tasks execute OnShutdown() and 
   Holds angle values from [0, 360] degrees, where 0 deg is
   the same as 360 deg. Offers some functionality to establish
   the difference between two angles.
+  
+```java
+AngleValue alpha = new AngleValue(45); // degrees
+AngleValue beta = new AngleValue(Math.PI/2 * AngleValue.toDEG); // 90 degrees
+
+AngleValue gamma = alpha.getSmallerAngleTo(beta);
+AngleValue delta = alpha.getLargerAngleTo(beta);
+
+System.out.println(gamma.getDegrees()); // prints 45
+System.out.println(delta.getDegrees()); // prints 315
+```
