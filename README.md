@@ -151,8 +151,7 @@ thread_for_several_periodic_tasks.Stop(); // its tasks execute OnShutdown() and 
   
 #### Value - AngleValue
   Holds angle values from [0, 360] degrees, where 0 deg is
-  the same as 360 deg. Offers some functionality to establish
-  the difference between two angles.
+  the same as 360 deg. Offers some useful functionality when working with angles.
   
 ```java
 AngleValue alpha = new AngleValue(45); // degrees
