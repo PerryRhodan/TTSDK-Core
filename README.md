@@ -102,6 +102,9 @@ The mode only needs to be set once, and will be applied across all classes.
   they are not precise in their timings, and a blocking task
   will block all subsequent tasks!
   
+  This implemenation is inferior to javas Timer (https://docs.oracle.com/javase/7/docs/api/java/util/Timer.html#scheduleAtFixedRate), which schedules tasks like this in a better way.
+  This implemenation however is different in that it runs all tasks on one single thread, which might be desired in some situation, which is why I kept it.
+  
   Implement your tasks that need to be done periodically:
   
 ```java
