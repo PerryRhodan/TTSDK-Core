@@ -1,5 +1,7 @@
 # TTSDK-Core
 
+For most of these functionalities there are more comprehensive ways to achieve things, but I found some of this useful for simplicity reasons.
+
 #### Abstraction - IDed
   Assigns a unique ID to the instance of an extending class.
   This is achieved by keeping count of the current highest id 
@@ -76,17 +78,78 @@ for (String datavalue : ds.ReadAll("specific_list_item")) {
 
   
 #### Log
-  Allows to output different levels of 
-  logging information. Only the desired 
-  level will be printed.
+  A simple and quick way to output different levels of 
+  logging information to the console.
+
+```java
+// Set desired mode
+Log.SetMode(Mode.ERROR, Mode.WARN);
+		
+// ...
+		
+Log.DEBUG("I am doing this, which is what I am supposed to do."); // wont be printed
+Log.WARN("Now however this does not seem right, I might be in a faulty state."); // printed
+Log.ERROR("I got into an error state!"); // printed
+		
+// ...
+```
+The mode only needs to be set once, and will be applied across all classes.
   
 #### Thread
   Thread (which might be a poor choice of name) 
-  offers an convenient way to execute certain thread tasks
-  periodically.
+  offers a simple way to execute certain thread tasks
+  periodically. There is no cleverness about it, and is meant
+  for longer periods (ie. 10 seconds) where timing is not important.
   Thread tasks execute one after each other, so
   they are not precise in their timings, and a blocking task
   will block all subsequent tasks!
+  
+  Implement your tasks that need to be periodically done:
+  
+```java
+class Caller extends ThreadTask {
+    @Override public void OnStartup() {
+	// ...
+    }
+    @Override public void InLoop() {
+	// ...
+    }
+    @Override public void OnShutdown() {
+	// ...
+    }
+}
+Caller caller = new Caller();
+		
+class Doer extends ThreadTask {
+    @Override public void OnStartup() {
+	// ...
+    }
+    @Override public void InLoop() {
+	// ...
+    }
+    @Override public void OnShutdown() {
+	// ...
+    }
+}
+Doer doer = new Doer();
+```
+
+Then create the thread responsible for the exection.
+
+```java
+// Create thread and assign tasks
+Thread thread_for_several_periodic_tasks = Thread.createNew(10000); // iterate every 10ms
+thread_for_several_periodic_tasks.AddTask(caller);
+thread_for_several_periodic_tasks.AddTask(doer);
+// Then start execution
+thread_for_several_periodic_tasks.Start(); // will start off with OnStartup(),
+					   // and the periodically call InLoop()
+		
+// ...
+		
+thread_for_several_periodic_tasks.Stop(); // its tasks execute OnShutdown() and then stops
+
+```
   
 #### Value - AngleValue
   Holds angle values from [0, 360] degrees, where 0 deg is
