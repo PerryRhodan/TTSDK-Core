@@ -9,8 +9,10 @@
  * 
  * History:
  *   25.11.2017 - Cleaning of code
- *   
- * 
+ *   12.06.2018 - Added default values and direct type
+ *   			  reading. Renamed ReadDataString(...)
+ *   			  to ProcessDataString(...). Also added
+ * 				  a few convenience methods.
  * Ideas:
  *   - Default value when loading
  * 
@@ -26,7 +28,6 @@ import de.taleteller.core.logging.Log;
  * 
  */
 public class DataString {
-
 	
 	/** delimiter to split the key-value pairs */
 	String delimiter;
@@ -34,17 +35,25 @@ public class DataString {
 	/** data in its key-value-pairs, without the delimiter yet */
 	LinkedList<String> data;
 
+	/** default values for the supported types*/
+	DefaultTypeValues default_values;
+	
+	
+	/////////////////////////////////////////////////////////////////
 	
 	public DataString(String delimiter) {
 		this.delimiter = delimiter;
 		data = new LinkedList<>();
+		default_values = new DefaultTypeValues();
 	}
+	
+	/////////////////////////////////////////////////////////////////
 	
 	/**
 	 * Reads in a datastring. This clears any currently hold data.
-	 * @param datastring
+	 * @param datastring - string containing data of correct format
 	 */
-	public void ReadDataString(String datastring) {
+	public void ProcessDataString(String datastring) {
 		String[] pieces = datastring.split(delimiter);
 		data.clear();
 		for (String piece : pieces) {
@@ -69,6 +78,44 @@ public class DataString {
 	}
 	
 	/**
+	 * Adds new key - value  pair to the stored data.
+	 * @param key
+	 * @param data
+	 */
+	public void Add(String key, short data) {
+		Add(key, "" + data);
+	}
+	
+	/**
+	 * Adds new key - value  pair to the stored data.
+	 * @param key
+	 * @param data
+	 */
+	public void Add(String key, int data) {
+		Add(key, "" + data);
+	}
+	
+	/**
+	 * Adds new key - value  pair to the stored data.
+	 * @param key
+	 * @param data
+	 */
+	public void Add(String key, long data) {
+		Add(key, "" + data);
+	}
+	
+	/**
+	 * Adds new key - value  pair to the stored data.
+	 * @param key
+	 * @param data
+	 */
+	public void Add(String key, boolean data) {
+		Add(key, "" + data);
+	}
+	
+	/////////////////////////////////////////////////////////////////
+	
+	/**
 	 * Returns all stored data as one data string.
 	 * @return
 	 */
@@ -85,6 +132,15 @@ public class DataString {
 	}
 	
 	/**
+	 * Clears all stored data.
+	 */
+	public void Clear() {
+		data.clear();
+	}
+	
+	/////////////////////////////////////////////////////////////////
+	
+	/**
 	 * Reads data field connected to given key.
 	 * @param key
 	 * @return
@@ -97,7 +153,8 @@ public class DataString {
 			if(pre.equalsIgnoreCase(key))
 				return suf;
 		}
-		Log.WARN("TaletellerSDK::DataString:: Read key does not exist in this data string. Returning null!");
+		Log.WARN("TaletellerSDK::DataString:: Read key does not exist"
+				+ " in this data string. Returning null!");
 		return null;
 	}
 	
@@ -119,11 +176,180 @@ public class DataString {
 		return sufs.toArray(new String[0]);
 	}
 	
+	//////////////////////////////
+	
 	/**
-	 * Clears all stored data.
+	 * Reads data field connected to given key.
+	 * Note that the value must be written as
+	 * "true" or "false". "1" or "0" wont work!
+	 * @param key
+	 * @return
 	 */
-	public void Clear() {
-		data.clear();
+	public boolean ReadBoolean(String key) {
+		for (String piece : data) {
+			String[] parts = piece.split(":", 2);
+			String pre = parts[0];
+			String suf = parts[1];
+			if(pre.equalsIgnoreCase(key)) {
+				try {
+					return Boolean.parseBoolean(suf);
+				} catch (NumberFormatException e) {
+					Log.ERROR("TaletellerCore::DataString:: ReadShort "
+							+ "on incorrect type! "
+							+ "(key: " + key + ", value: " + suf + ")");
+					return default_values.getDefault_value_boolean();
+				}
+			}	
+		}
+		Log.WARN("TaletellerCore::DataString:: Read key does not exist"
+				+ " in this data string. Returning default!"
+				+ " (key: " + key + ")");
+		return default_values.getDefault_value_boolean();
+	}
+	
+	//////////////////////////////
+	
+	/**
+	 * Reads data field connected to given key.
+	 * @param key
+	 * @return
+	 */
+	public short ReadShort(String key) {
+		for (String piece : data) {
+			String[] parts = piece.split(":", 2);
+			String pre = parts[0];
+			String suf = parts[1];
+			if(pre.equalsIgnoreCase(key)) {
+				try {
+					return Short.parseShort(suf);
+				} catch (NumberFormatException e) {
+					Log.ERROR("TaletellerCore::DataString:: ReadShort "
+							+ "on incorrect type! "
+							+ "(key: " + key + ", value: " + suf + ")");
+					return default_values.getDefault_value_short();
+				}
+			}	
+		}
+		Log.WARN("TaletellerCore::DataString:: Read key does not exist"
+				+ " in this data string. Returning default!"
+				+ " (key: " + key + ")");
+		return default_values.getDefault_value_short();
+	}
+	
+	/**
+	 * Reads data field connected to given key.
+	 * @param key
+	 * @return
+	 */
+	public int ReadInt(String key) {
+		for (String piece : data) {
+			String[] parts = piece.split(":", 2);
+			String pre = parts[0];
+			String suf = parts[1];
+			if(pre.equalsIgnoreCase(key)) {
+				try {
+					return Integer.parseInt(suf);
+				} catch (NumberFormatException e) {
+					Log.ERROR("TaletellerCore::DataString:: ReadInt "
+							+ "on incorrect type! "
+							+ "(key: " + key + ", value: " + suf + ")");
+					return default_values.getDefault_value_int();
+				}
+			}	
+		}
+		Log.WARN("TaletellerCore::DataString:: Read key does not exist"
+				+ " in this data string. Returning default!"
+				+ " (key: " + key + ")");
+		return default_values.getDefault_value_int();
+	}
+	
+	/**
+	 * Reads data field connected to given key.
+	 * @param key
+	 * @return
+	 */
+	public long ReadLong(String key) {
+		for (String piece : data) {
+			String[] parts = piece.split(":", 2);
+			String pre = parts[0];
+			String suf = parts[1];
+			if(pre.equalsIgnoreCase(key)) {
+				try {
+					return Long.parseLong(suf);
+				} catch (NumberFormatException e) {
+					Log.ERROR("TaletellerCore::DataString:: ReadLong "
+							+ "on incorrect type! "
+							+ "(key: " + key + ", value: " + suf + ")");
+					return default_values.getDefault_value_long();
+				}
+			}	
+		}
+		Log.WARN("TaletellerCore::DataString:: Read key does not exist"
+				+ " in this data string. Returning default!"
+				+ " (key: " + key + ")");
+		return default_values.getDefault_value_long();
+	}
+	
+	//////////////////////////////
+	
+	/**
+	 * Reads data field connected to given key.
+	 * @param key
+	 * @return
+	 */
+	public float ReadFloat(String key) {
+		for (String piece : data) {
+			String[] parts = piece.split(":", 2);
+			String pre = parts[0];
+			String suf = parts[1];
+			if(pre.equalsIgnoreCase(key)) {
+				try {
+					return Float.parseFloat(suf);
+				} catch (NumberFormatException e) {
+					Log.ERROR("TaletellerCore::DataString:: ReadLong "
+							+ "on incorrect type! "
+							+ "(key: " + key + ", value: " + suf + ")");
+					return default_values.getDefault_value_float();
+				}
+			}	
+		}
+		Log.WARN("TaletellerCore::DataString:: Read key does not exist"
+				+ " in this data string. Returning default!"
+				+ " (key: " + key + ")");
+		return default_values.getDefault_value_float();
+	}
+	
+	/**
+	 * Reads data field connected to given key.
+	 * @param key
+	 * @return
+	 */
+	public double ReadDouble(String key) {
+		for (String piece : data) {
+			String[] parts = piece.split(":", 2);
+			String pre = parts[0];
+			String suf = parts[1];
+			if(pre.equalsIgnoreCase(key)) {
+				try {
+					return Double.parseDouble(suf);
+				} catch (NumberFormatException e) {
+					Log.ERROR("TaletellerCore::DataString:: ReadLong "
+							+ "on incorrect type! "
+							+ "(key: " + key + ", value: " + suf + ")");
+					return default_values.getDefault_value_double();
+				}
+			}	
+		}
+		Log.WARN("TaletellerCore::DataString:: Read key does not exist"
+				+ " in this data string. Returning default!"
+				+ " (key: " + key + ")");
+		return default_values.getDefault_value_float();
+	}
+
+	/////////////////////////////////////////////////////
+	
+	public void setDefault_values(DefaultTypeValues default_values) {
+		this.default_values = default_values;
 	}
 	
 }

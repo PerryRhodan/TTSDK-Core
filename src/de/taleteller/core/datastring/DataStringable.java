@@ -9,7 +9,6 @@
  * 
  * History:
  *   25.11.2017 - Cleaning of code
- *   
  * 
  * Ideas:
  *   

@@ -20,6 +20,7 @@ package de.taleteller.core.logging;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Logger;
 
 /**
  * 
@@ -29,6 +30,8 @@ public class Log {
 	/** formatter to output the timestamp */
 	private static SimpleDateFormat sdf
 		= new SimpleDateFormat("yyyy:MMM:dd:HH:mm:ss");
+	
+	private static Logger logger;
 	
 	/** Available log modes. If set, log output of the 
 	 *  same level will be printed. */
