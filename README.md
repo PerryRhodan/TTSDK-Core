@@ -139,7 +139,7 @@ Then create the thread responsible for the exection.
 
 ```java
 // Create thread and assign tasks
-Thread thread_for_several_periodic_tasks = Thread.createNew(10000); // iterate every 10ms
+Thread thread_for_several_periodic_tasks = Thread.createNew(10000); // iterate every 10m
 thread_for_several_periodic_tasks.AddTask(caller);
 thread_for_several_periodic_tasks.AddTask(doer);
 // Then start execution
