@@ -154,7 +154,8 @@ public class DataString {
 				return suf;
 		}
 		Log.WARN("TaletellerSDK::DataString:: Read key does not exist"
-				+ " in this data string. Returning null!");
+				+ " in this data string. Returning null!"
+				+ " (key: " + key + ")");
 		return null;
 	}
 	
